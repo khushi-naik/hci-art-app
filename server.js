@@ -10,6 +10,7 @@ const { v4: uuidV4 } = require('uuid')
 const compression = require('compression')
 const { Console } = require('console')
 const bodyParser = require('body-parser');
+const async = require('async')
 const PORT = process.env.PORT || 3000
 let data = [[], []]
 
@@ -22,7 +23,7 @@ const connectDb = async ()=> {
         console.log(`MongoDB Connected: ${conn.connection.host}`);
     }
     catch (error) {
-        console.log(error)
+        console.log("eeeee"+error)
         process.exit(1);
     }
 }
@@ -45,11 +46,18 @@ app.get('/', (req, res) => {
 app.get('/signup', async (req, res) => {
     try{
         var myobj = { username: "Company", password: "Highway" };
-        await User.insertOne(myobj)
+        console.log(myobj);
+        await Book.insertMany([
+            {
+                username: "Company",
+                password: "Highwayww",
+            }
+          ]);
     }
     catch(error){
         console.log("err", + error);
     }
+    res.send("data added...")
 })
 
 app.get('/onlinegames', (req, res) => {
@@ -161,10 +169,15 @@ io.on('connection', (socket) => {
 
 setInterval(updateCountdown, 1000);
 
-server.listen(PORT, () => {
+connectDb().then(() => {
+    server.listen(PORT, () => {
+        console.log('Running on port ' + PORT);
+    })
+})
+/*server.listen(PORT, () => {
     console.log('Running on port ' + PORT)
 })
-
+*/
 // socket.on('new user', (usr) => {
 //     socket.username = usr;
 //     console.log('Подключился пользователь - Имя: ' + socket.username);
